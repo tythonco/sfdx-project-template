@@ -13,7 +13,6 @@ openssl x509 -req -sha256 -days 365 -in server.csr -signkey server.key -out serv
 echo "Key will now be encoded in BASE64 and displayed, use the output for the value of SFDC_SERVER_KEY environnment variable"
 echo "/n"
 base64 server.key
-echo "Now cleaning up, keys will be deleted"
+echo "Now cleaning up, server.csr will be deleted"
 rm server.csr
-rm server.key
 echo "Certificate and key generation complete, please add server.crt to your OAuth connected app in salesforce"

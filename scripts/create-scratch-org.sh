@@ -2,6 +2,10 @@
 
 # IMPORTANT! Replace with the actual project name!
 PROJECT_NAME=MyProject
+# IMPORTANT! Replace with the client id of the Dev Hub connected app!
+SFDC_DEVHUB_CLIENTID=MyConnectedAppClientId
+# IMPORTANT! Replace with a system adminstrator's username from the Dev Hub org!
+SFDC_DEVHUB_USER=MyDevHubAdminUserName
 # SAMPLE DATA: Define your sample data, uncomment below while updating comma-separated data file names
 # DATA_IMPORT_FILES=data/SomeObjects1.json,data/MySettings.json,data/EtcEtc.json
 DEVHUB_NAME="${PROJECT_NAME}DevHub"
@@ -10,7 +14,7 @@ PERMSET_NAME="${PROJECT_NAME}UserPermissions"
 echo ""
 echo "Authorizing you with the ${PROJECT_NAME} Dev Hub org..."
 echo ""
-sfdx force:auth:web:login --setalias ${DEVHUB_NAME} --json
+sfdx force:auth:jwt:grant --clientid ${SFDC_DEVHUB_CLIENTID} --jwtkeyfile server.key --username ${SFDC_DEVHUB_USER} --setdefaultdevhubusername -a ${DEVHUB_NAME}
 echo ""
 if [ "$?" = "1" ]
 then
@@ -34,7 +38,7 @@ echo "SUCCESS: Scratch org created!"
 echo ""
 echo "Pushing source to the scratch org, this may take a while so now might be a good time to stretch your legs and/or grab some coffee..."
 echo ""
-sfdx force:source:push --json
+sfdx force:source:push -w -1 --json
 echo ""
 if [ "$?" = "1" ]
 then

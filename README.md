@@ -51,11 +51,11 @@
 6. Cancel the first build and click the gear icon to update the project settings
 
 7. Choose `Environment Variables` and add the following:
-..* `SFDC_SERVER_KEY` This value can be copied from the output of running `base64 server.key` locally
-..* `SFDC_PROD_CLIENTID` This can be copied from `SFDC_DEVHUB_CLIENTID` in `scripts/create-scratch-org.sh`
-..* `SFDC_PROD_USER` This can be copied from `SFDC_DEVHUB_USER` in `scripts/create-scratch-org.sh`
-..* `SFDC_QA_CLIENTID` This can be copied from the Consumer Key of the connected app you created in the sandbox QA org
-..* `SFDC_QA_USER` This should be the username of a system administrator for your sandbox QA org
+    * `SFDC_SERVER_KEY` This value can be copied from the output of running `base64 server.key` locally
+    * `SFDC_PROD_CLIENTID` This can be copied from `SFDC_DEVHUB_CLIENTID` in `scripts/create-scratch-org.sh`
+    * `SFDC_PROD_USER` This can be copied from `SFDC_DEVHUB_USER` in `scripts/create-scratch-org.sh`
+    * `SFDC_QA_CLIENTID` This can be copied from the Consumer Key of the connected app you created in the sandbox QA org
+    * `SFDC_QA_USER` This should be the username of a system administrator for your sandbox QA org
 
 8. Choose `Advanced Settings` and turn on `Only build pull requests`
 

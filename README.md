@@ -10,6 +10,8 @@
 
 4. Scripts to spin up scratch orgs included (see `scripts/create-scratch-org.sh`)
 
+5. If you'd like code coverage results to be retrieved when invoking Apex unit tests via sfdx (recommended) then add `"salesforcedx-vscode-core.retrieve-test-code-coverage": true` to your `.vscode/settings.json` file
+
 ## Connected App Setup
 
 1. Run `bash scripts/generate-keys.sh`

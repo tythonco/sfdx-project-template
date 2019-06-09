@@ -38,7 +38,7 @@ echo "SUCCESS: Scratch org created!"
 echo ""
 echo "Pushing source to the scratch org, this may take a while so now might be a good time to stretch your legs and/or grab some coffee..."
 echo ""
-sfdx force:source:push -w -1 --json
+sfdx force:source:push --json
 echo ""
 if [ "$?" = "1" ]
 then

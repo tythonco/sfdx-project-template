@@ -20,19 +20,19 @@
 
 3. Enter `CICD` and `devs@tython.co` for the Connected App name & contact email, respectively.
 
-4. Check `Enable OAuth Settings`, enter `` for the Callback URL, & select all available OAuth scopes.
+4. Check `Enable OAuth Settings`, enter `http://localhost:1717/OauthRedirect` for the Callback URL, & select all available OAuth scopes.
 
 5. Select `Use digital signatures` and upload the `server.crt` file created from step 1 (if you will NOT be setting up a QA org for CI/CD then you can now delete this file)
 
 6. Leave the remaining defaults for the connected app and save your work by selecting `Save` and then `Continue` when prompted.
 
-7. Click `Manage` and then `Edit Policies` on the newly created connected app and then set `Permitted Users` to `Admin approved users are pre-authorized` before clicking `Save`
+7. Copy the `Consumer Key` value and paste this into the `SFDC_DEVHUB_CLIENTID` value within `scripts/create-scratch-org.sh`
 
-8. Scroll down and click `Manage Profiles` and then select `System Administrator` and hit `Save`
+8. Enter a System Administrator's username from the Dev Hub org into `SFDC_DEVHUB_USER` within `scripts/create-scratch-org.sh`
 
-9. Go back to your connected app's main settings (Setup > App Manager > Select View from Dropdown by CICD), copy the `Consumer Key` value and paste this into the `SFDC_DEVHUB_CLIENTID` value within `scripts/create-scratch-org.sh`
+9. Click `Manage` and then `Edit Policies` on the newly created connected app and then set `Permitted Users` to `Admin approved users are pre-authorized` before clicking `Save`
 
-10. Enter a System Administrator's username from the Dev Hub org into `SFDC_DEVHUB_USER` within `scripts/create-scratch-org.sh`
+10. Scroll down and click `Manage Profiles` and then select `System Administrator` and hit `Save`
 
 11. Upload a new note to LastPass containing the server.key file contents for other devs to use. Note: NEVER track this file in git. If it is ever accidentally committed then assume it has been compromised, generate new keys, and update the connected app and LastPass and notify teammates of the change.
 

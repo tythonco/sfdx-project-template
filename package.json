@@ -1,0 +1,48 @@
+{
+    "name": "MyProject",
+    "private": true,
+    "devDependencies": {
+        "@salesforce/eslint-config-lwc": "^0.3.0",
+        "@salesforce/lwc-jest": "^0.5.5",
+        "acorn": "^6.1.1",
+        "eslint": "^5.15.1",
+        "husky": "^1.3.1",
+        "lint-staged": "^8.1.5",
+        "prettier": "^1.16.4"
+    },
+    "scripts": {
+        "start": "bash scripts/create-scratch-org.sh",
+        "setup": "npm run setup-auth-devhub",
+        "setup-auth-devhub": "bash scripts/setup-auth-devhub.sh",
+        "setup-auth-prod": "bash scripts/setup-auth-prod.sh",
+        "setup-auth-qa": "bash scripts/setup-auth-qa.sh",
+        "decrypt": "npm run setup-auth-decrypt",
+        "setup-auth-decrypt": "bash scripts/setup-auth-decrypt.sh",
+        "lint": "npm run lint:lwc && npm run lint:aura",
+        "lint:lwc": "eslint **/lwc/**",
+        "lint:aura": "sfdx force:lightning:lint **/aura/** --exit",
+        "test": "npm run lint && npm run test:unit",
+        "test:unit": "lwc-jest",
+        "test:unit:watch": "lwc-jest --watch",
+        "test:unit:debug": "lwc-jest --debug",
+        "prettier": "prettier --write '**/*.{cmp,component,css,html,js,json,md,page,yaml,yml}'",
+        "prettier:verify": "prettier --list-different '**/*.{cmp,component,css,html,js,json,md,page,yaml,yml}'"
+    },
+    "husky": {
+        "hooks": {
+            "pre-commit": "lint-staged && npm run lint:aura"
+        }
+    },
+    "lint-staged": {
+        "linters": {
+            "**/*.{cmp,component,css,html,js,json,md,page,yaml,yml}": [
+                "prettier --write",
+                "git add"
+            ],
+            "**/lwc/**": [
+                "eslint",
+                "git add"
+            ]
+        }
+    }
+}

@@ -65,12 +65,27 @@
 
 If you've done everything correctly then opening a new PR or pushing a commit to an open PR will run a check-only deployment validation against production, merging a PR into `dev` will kick off a deployment to QA, and merging a PR into `master` will kick off a deployment to production :+1:
 
+## Github Action CI Setup
+
+(WIP)
+
+1. [Add required secrets to your project repo](https://help.github.com/en/actions/configuring-and-managing-workflows/creating-and-storing-encrypted-secrets)
+E.g. `AUTH_FILE_KEY` used to encrypt the Auth URL file; See `.github/workflow/validate.yml` for other referenced secrets.
+
+2. Note the "*_auth_url.txt" files used in this project; The default is "prod_auth_url.txt" (and "qa_auth_url.txt", if utilizing a sandbox).
+
+3. By default, the automated validation workflow will trigger on opening a pull request targeting either "dev" or "master" branches.
+If "dev" is the target, a succesful validation run will be followed with a deployment to QA/Sandbox (WIP).
+If "master" is the target, a successful validation will indicate that deployment to Production org should be ready.
+
 ## Resources
 
 [LWC Recipes](https://github.com/trailheadapps/lwc-recipes)
 [eBikes Sample App](https://github.com/trailheadapps/ebikes-lwc)
 [DreamHouse Sample App](https://github.com/dreamhouseapp/dreamhouse-lwc)
 [CI/CD Setup Instructions](https://mickwheelz.net/index.php/2018/10/03/continuous-integration-with-github-sfdx-and-circleci-easier-than-you-think/)
+[Github Actions Documentation](https://help.github.com/en/actions)
+[Sample Github Action workflow files](https://github.com/actions/starter-workflows/tree/master/ci)
 
 ## Description of Files and Directories
 

@@ -11,7 +11,7 @@ on:
 # NOTE: ENV vars can be declated globally here and shared among jobs/steps below
 # See: https://github.com/actions/starter-workflows/blob/master/ci/google.yml
 env:
-  AUH_FILE_KEY: ${{ secrets.AUH_FILE_KEY }}
+  AUTH_FILE_KEY: ${{ secrets.AUTH_FILE_KEY }}
 
 jobs:
   # TODO: Add workflow that creates release tag on successful merge into Master
@@ -42,7 +42,7 @@ jobs:
       - name: Auth to QA org
         id: ci-validate-qa
         if: github.base_ref == 'dev'
-        uses: ./.github/actions/ci-validate-prod
+        uses: ./.github/actions/sfdx-validate
         with:
           auth-file-key: ${{ secrets.AUTH_FILE_KEY }}
           target-alias: 'QA'
@@ -63,10 +63,17 @@ jobs:
       # a) an action to push a new version tag? May need to take BOOL arg for whether to run
       # b) an action to ping slack channel?
       # c) shoot an email notification with links to subsequent forms that need be filled?
-      - name: Validate Success
-        if: success()
+      # d) In case QA validate succeeded, we can deploy to QA sandbox?
+      - name: Validate QA Success
+        if: success() && github.base_ref == 'dev'
+        # TODO: replace with action to run actual deploy to sandbox
         run: |
-          echo "Authentication to Prod org succeeded! Remember to add a version tag for the new release!"
+          echo "Authentication to QA org succeeded! Deploying to QA sandbox..."
+
+      - name: Validate Prod Success
+        if: success() && github.base_ref == 'master'
+        run: |
+          echo "Authentication to Prod org succeeded! Ready to deploy! Remember to add a version tag for the new release!"
 
       # TODO: On fail, can run:
       # a) Slack notification flow?

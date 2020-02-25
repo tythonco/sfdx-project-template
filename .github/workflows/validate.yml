@@ -26,10 +26,7 @@ jobs:
       # Check for existence of files or env vars
       - name: Check required items
         run: |
-          if [ ! -f prod_auth_url.txt.enc ]; then
-            echo "Missing auth_url txt file! Exiting!"
-            exit 1
-          elif [ ! -z $AUTH_FILE_KEY ]; then
+          if [ -z ${{ env.AUTH_FILE_KEY }} ]; then
             echo "Missing Auth File Key in Github secrets! Exiting!"
             exit 1
           else
@@ -50,14 +47,13 @@ jobs:
       - name: Auth to Prod org
         id: ci-validate-prod
         if: github.base_ref == 'master'
-        uses: ./.github/actions/ci-validate-prod
+        uses: ./.github/actions/sfdx-validate
         # NOTE: To use remote action instead of local:
         # https://help.github.com/en/actions/reference/workflow-syntax-for-github-actions#jobsjob_idstepsuses
         with:
           # NOTE: Requires Auth file password to be entered into Github Secrets
           # See: help.github.com/en/actions/configuring-and-managing-workflows/creating-and-storing-encrypted-secrets
           auth-file-key: ${{ env.AUTH_FILE_KEY }}
-          target-alias: 'Prod'
 
       # TODO: On success, can run:
       # a) an action to push a new version tag? May need to take BOOL arg for whether to run
@@ -66,12 +62,17 @@ jobs:
       # d) In case QA validate succeeded, we can deploy to QA sandbox?
       - name: Validate QA Success
         if: success() && github.base_ref == 'dev'
-        # TODO: replace with action to run actual deploy to sandbox
-        run: |
-          echo "Authentication to QA org succeeded! Deploying to QA sandbox..."
+        uses: ./.github/actions/sfdx-deploy
+        with:
+          # TODO: Usually we will deploy to QA/Sandbox org on successful check-deploy
+          # If provided, action will use specific job-id; Else, it will grab the prev deploy operation id
+          auth-file-key: ${{ env.AUTH_FILE_KEY }}
+          # target-alias: 'QA'
+          # deploy-id: value-from-prev-step
 
       - name: Validate Prod Success
         if: success() && github.base_ref == 'master'
+        # TODO: Assumes Prod deploy to be a manual operation; If not, we will want to trigger the action used in step above
         run: |
           echo "Authentication to Prod org succeeded! Ready to deploy! Remember to add a version tag for the new release!"
 

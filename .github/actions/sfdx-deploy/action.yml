@@ -1,0 +1,23 @@
+# Local action for authenticating and running *quick* deployments via SFDX
+# For syntax see: https://help.github.com/en/actions/building-actions/metadata-syntax-for-github-actions
+name: 'CI SFDX Deploy'
+author: 'tythondev'
+description: 'Carries out org deployments using SFDX and quick-deploy option'
+inputs:
+  auth-file-key:
+    description: 'Auth key to Prod org'
+    required: true
+  target-alias:
+    description: The alias or username to target for the validation command
+    required: false
+    default: 'Prod'
+  deploy-id:
+    description: A deployment job id from a previous successful check deploy
+    required: false
+runs:
+  using: 'docker'
+  image: 'Dockerfile'
+  args:
+    - ${{ inputs.auth-file-key }}
+    - ${{ inputs.target-alias }}
+    - ${{ inputs.deploy-id }}

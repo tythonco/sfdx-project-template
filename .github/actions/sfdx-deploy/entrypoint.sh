@@ -2,10 +2,11 @@
 
 AUTH_FILE_KEY=$1
 TARGET_ALIAS=$2
+DEPLOY_ID=$3
 AUTH_URL="${TARGET_ALIAS,,}_auth_url.txt"
 ENC_AUTH_URL="${AUTH_URL}.enc"
 
-echo "CI-Validate: Setting up connection to Salesforce org with user/alias ... ${TARGET_ALIAS}"
+echo "CI-Deploy: Setting up connection to org with user/alias ... ${TARGET_ALIAS}"
 
 if test -f "$ENC_AUTH_URL" ; then
     openssl enc -d -aes-256-cbc -md md5 -in "$ENC_AUTH_URL" -out "$AUTH_URL" -k "$AUTH_FILE_KEY"
@@ -18,16 +19,16 @@ if test -f "$AUTH_URL" ; then
     # Authenticate to salesforce Prod org
     echo "Authenticating..."
     sfdx force:auth:sfdxurl:store -f "$AUTH_URL" -a "$TARGET_ALIAS" && rm "$AUTH_URL"
-    #Convert to MDAPI format for validation against prod
-    echo "Converting to MDAPI format..."
-    sfdx force:source:convert -d deploy_components -r force-app
-    #Simulate deployment to prod & run all tests
-    echo "Validating against production by simulating a deployment & running all tests..."
-    sfdx force:mdapi:deploy -c -d deploy_components -u Prod -l RunLocalTests -w -1
 
-    if [ "$?" = "1" ]
-    then
-        echo "Problem encountered during check deploy! Exiting!"
+    # If not provided, get deploy ID from prev successful step
+    echo "Fetch Deploy ID and perform quick deployment ..."
+    if [ -z "$DEPLOY_ID" ] ; then
+        DEPLOY_ID=$(sfdx force:mdapi:deploy:report -u "$TARGET_ALIAS" | grep "jobid" | sed -E 's/^jobid:[[:blank:]]*(.*)$/\1/')
+    fi
+    sfdx force:mdapi:deploy -u "$TARGET_ALIAS"  -w -1 -q "$DEPLOY_ID"
+
+    if [ "$?" = "1" ] ; then
+        echo "Problem encountered during deploy! Exiting!"
         exit 1
     fi
 else

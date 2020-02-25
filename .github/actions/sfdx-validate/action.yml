@@ -2,7 +2,7 @@
 # For syntax see: https://help.github.com/en/actions/building-actions/metadata-syntax-for-github-actions
 name: 'CI SFDX Validate'
 author: 'tythondev'
-description: 'Authenticates to Salesforce org using SFDX cli tool'
+description: 'Run a check-only deploy to Salesforce org using SFDX cli tool'
 inputs:
   auth-file-key:
     description: 'Auth key to Prod org'

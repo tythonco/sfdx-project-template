@@ -23,7 +23,7 @@ if test -f "$AUTH_URL" ; then
     sfdx force:source:convert -d deploy_components -r force-app
     #Simulate deployment to prod & run all tests
     echo "Validating against production by simulating a deployment & running all tests..."
-    sfdx force:mdapi:deploy -c -d deploy_components -u Prod -l RunLocalTests -w -1
+    sfdx force:mdapi:deploy -c -d deploy_components -u "$TARGET_ALIAS" -l RunLocalTests -w -1
 
     if [ "$?" = "1" ]
     then

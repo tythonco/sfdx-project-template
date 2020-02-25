@@ -1,0 +1,18 @@
+# Local action for authenticating and running check-only deployments via SFDX
+# For syntax see: https://help.github.com/en/actions/building-actions/metadata-syntax-for-github-actions
+name: 'CI SFDX Validate'
+author: 'tythondev'
+description: 'Authenticates to Salesforce org using SFDX cli tool'
+inputs:
+  auth-file-key:
+    description: 'Auth key to Prod org'
+    required: true
+  target-alias:
+    description: The alias or username to target for the validation command
+    default: 'Prod'
+runs:
+  using: 'docker'
+  image: 'Dockerfile'
+  args:
+    - ${{ inputs.auth-file-key }}
+    - ${{ inputs.target-alias }}

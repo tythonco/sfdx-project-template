@@ -1,5 +1,5 @@
 # Github Actions workflow that uses SFDX to authenticate and run validations and deployments
-name: sfdx-validate
+name: validate
 on:
   # https://help.github.com/en/actions/reference/workflow-syntax-for-github-actions#onpushpull_requestbranchestags
   pull_request:

@@ -70,3 +70,4 @@ deploy_*
 .temp
 scripts/*.key
 scripts/*.crt
+*.todo*

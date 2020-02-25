@@ -2,113 +2,92 @@
 
 ## Dev, Build and Test
 
-(PRE-REQ: `Node`, `sfdx-cli`, `openssl`, `sed` are required, installation depending on your system!)
-
 1. Run `npm install` to bring in all development dependencies.
 
-2. Configuration (if project starter):
-In `config/project-scratch-def.json` there *might* be org features that need to be enabled case-by-case. See [docs](https://developer.salesforce.com/docs/atlas.en-us.sfdx_dev.meta/sfdx_dev/sfdx_dev_scratch_orgs_def_file.htm).
+2. Use SFDX to create new LWC; Note files will auto-lint on git commit.
 
-Make sure you have set up and identified a Dev Hub org, a Prod org (if different from Dev Hub org), and a QA sandbox org.
+3. Generate keys and a connected app in the Dev Hub org for scratch org creation (see `Connected App Setup`) & CI/CD (see `CircleCI Setup`)
 
-For ISV projects, be sure to [link the managed package namespace to the Dev Hub](https://developer.salesforce.com/docs/atlas.en-us.sfdx_dev.meta/sfdx_dev/sfdx_dev_reg_namespace.htm) and then set the namespace in `sfdx-project.json`
-
-3. Authenticate to Dev Hub org for scratch org creation using auth flow
-(see `Org Authentication`) and if project starter, set up CI/CD (see `CI Setup`)
-
-4. Script to spin up scratch orgs included (see `scripts/create-scratch-org.sh`); Use shortcut `npm start` once auth is set up.
+4. Scripts to spin up scratch orgs included (see `scripts/create-scratch-org.sh`)
 
 5. If you'd like code coverage results to be retrieved when invoking Apex unit tests via sfdx (recommended) then add `"salesforcedx-vscode-core.retrieve-test-code-coverage": true` to your `.vscode/settings.json` file
 
-### Org Authentication
+## Connected App Setup
 
-*Use the shortcut:*
+1. Run `bash scripts/generate-keys.sh`
 
-1. `npm run setup`.
+2. Create a Connected App in the Dev Hub org. (Setup > App Manager > New Connected App)
 
-OR
+3. Enter `CICD` and `devs@tython.co` for the Connected App name & contact email, respectively.
 
-*Manual steps for project starter:*
+4. Check `Enable OAuth Settings`, enter `http://localhost:1717/OauthRedirect` for the Callback URL, & select all available OAuth scopes.
 
-1. Setup Dev Hub:
-Run command `sfdx force:auth:web:login -s -a {ProjectName}DevHub`. (Note the namespaced alias.)
-Login portal page will open; login to org using the appropriate user/pass.
+5. Select `Use digital signatures` and upload the `server.crt` file created from step 1 (if you will NOT be setting up a QA org for CI/CD then you can now delete this file)
 
-2. Once the web auth flow completes successfully, run `sfdx force:org:display --verbose`
-Note the "Sfdx Auth Url" value.
+6. Leave the remaining defaults for the connected app and save your work by selecting `Save` and then `Continue` when prompted.
 
-3. Create a local file `sfdx_auth_url.txt` and paste the value for "SFDX_AUTH_URL" obtained above (and nothing else).
-This is for spinning up new scratch orgs locally via `create-scratch-org` script and must be kept out of source control!
+7. Copy the `Consumer Key` value and paste this into the `SFDC_DEVHUB_CLIENTID` value within `scripts/create-scratch-org.sh`
 
-4. Generate a secure password that will be used for encryption/decryption of the auth_url file, e.g. obtained via 1Password generator.
-This password will be set in both CI and securely shared with other team members.
+8. Enter a System Administrator's username from the Dev Hub org into `SFDC_DEVHUB_USER` within `scripts/create-scratch-org.sh`
 
-5. Use the `openssl` utility to encrypt `sfdx_auth_url.txt`. This *will* be checked into source.
-NOTE: from the command below you need to sub in the secure password for the `-k` argument.
+9. Click `Manage` and then `Edit Policies` on the newly created connected app and then set `Permitted Users` to `Admin approved users are pre-authorized` before clicking `Save`
 
-```bash
-openssl enc -aes-256-cbc -md md5 -k “Super Secure Password!!!” -in sfdx_auth_url.txt -out sfdx_auth_url.txt.enc
-```
+10. Scroll down and click `Manage Profiles` and then select `System Administrator` and hit `Save`
 
-6. Share the auth_url file password via secure organization methods, such as a 1Password secure note.
+11. Upload a new note to LastPass containing the server.key file contents for other devs to use. Note: NEVER track this file in git. If it is ever accidentally committed then assume it has been compromised, generate new keys, and update the connected app and LastPass and notify teammates of the change.
 
-7. Modify variable in `create-scratch-org.sh` with the project name.
+## CircleCI Setup
 
-8a. If the target org for production deployments is the Dev Hub org then use `cp` to copy `sfdx_auth_url.txt` and `sfdx_auth_url.txt.enc` to `prod_auth_url.txt` and `prod_auth_url.txt.enc`, respectively
+1. Follow the steps from `Connected App Setup` - note this Dev Hub org will be treated as the Production instance by CircleCI.
 
-8b. If the target org for production deployments is NOT the Dev Hub org (such as for ISV projects) then repeat steps 1 through 5 using `{ProjectName}Prod` as an org alias and `prod_auth_url.txt` for the auth url
+2. Create a Salesforce sandbox from the Dev Hub / Production org to be used for QA
 
-For the encryption password just use the same one from the Dev Hub org.
+3. Repeat steps 2-8 from `Connected App Setup` in this QA org (you can reuse the original server.crt file and then delete it)
 
-9. If a Salesforce sandbox has been set up for QA then repeat `Org Authentication` for QA org using `sfdx force:auth:web:login -a {ProjectName}QA -r https://test.salesforce.com`.
+4. Log into CircleCI via your Github account and click `Add Projects`
 
-To get the QA org's auth url, use `sfdx force:org:display -u {ProjectName}QA --verbose`.
+5. Select your Github repository then `Set Up Project` and `Start building`
 
-For the auth file creation/encryption, follow steps 3-5 in `Org Authentication`. (Use `qa_auth_url.txt` to differentiate.)
+6. Cancel the first build and click the gear icon to update the project settings
 
-For the encryption password just use the same one from the Dev Hub & Prod org(s).
+7. Choose `Environment Variables` and add the following:
+    * `SFDC_SERVER_KEY` This value can be copied from the output of running `base64 server.key` locally
+    * `SFDC_PROD_CLIENTID` This can be copied from `SFDC_DEVHUB_CLIENTID` in `scripts/create-scratch-org.sh`
+    * `SFDC_PROD_USER` This can be copied from `SFDC_DEVHUB_USER` in `scripts/create-scratch-org.sh`
+    * `SFDC_QA_CLIENTID` This can be copied from the Consumer Key of the connected app you created in the sandbox QA org
+    * `SFDC_QA_USER` This should be the username of a system administrator for your sandbox QA org
 
-OR
+8. Choose `Advanced Settings` and turn on `Only build pull requests`
 
-*Manual steps for non project starter(s):*
+9. In the Github repository set `dev` as the default branch so all PRs will be opened against it instead of master.
 
-1. Retrieve secure encryption/decryption password via secure sharing method, such as 1Password
-
-2. Use the `openssl` utility to decrypt `sfdx_auth_url.txt.enc`
-
-```bash
-openssl enc -d -aes-256-cbc -md md5 -k "Super Secure Password!!!" -in sfdx_auth_url.txt.enc -out sfdx_auth_url.txt
-```
-
-### CircleCI Setup for Project Starter
-
-1. Follow steps from `Org Authentication`, making sure a Salesforce sandbox has been set up for QA.
-
-2. Login to CircleCI under the org account. Goto "Add Project" and link the new project repo.
-NOTE: This kicks off a first build; Immediately cancel that build because it will fail.
-
-3. Go into "Settings" => "Environment Variables" for this project.
-Add a new env var named `AUTH_FILE_KEY` and give it the password you used when encrypting production & QA auth_url files.
-
-4. Choose `Advanced Settings` and turn on `Only build pull requests`
-
-5. In the Github repository set `dev` as the default branch so all PRs will be opened against it instead of master.
-
-6. Create a new branch that is one commit behind `master` in the Github repository named `master-clone` and open a PR for merging master into this branch named `Dummy PR for CircleCI - NEVER CLOSE/MERGE` Since we have `dev` set as our default branch, enabling the option within CircleCI to only build on commits to branches with open PRs and/or the default branch itself builds will not run on commits to master unless this PR remains open. [See the related CircleCI forum for more info](https://discuss.circleci.com/t/option-to-enable-build-on-several-default-branches/13543)
+10. Create a new branch off `master` in the Github repository named `master-clone` and open a PR for merging master into this branch named `Dummy PR for CircleCI - NEVER CLOSE/MERGE` Since we have `dev` set as our default branch, enabling the option within CircleCI to only build on commits to branches with open PRs and/or the default branch itself builds will not run on commits to master unless this PR remains open. [See the related CircleCI forum for more info](https://discuss.circleci.com/t/option-to-enable-build-on-several-default-branches/13543)
 
 If you've done everything correctly then opening a new PR or pushing a commit to an open PR will run a check-only deployment validation against production, merging a PR into `dev` will kick off a deployment to QA, and merging a PR into `master` will kick off a deployment to production :+1:
+
+## Github Action CI Setup
+
+(WIP)
+
+1. This workflow utilizes the auth-url-file flow for connecting to orgs.
+After connecting to DevHub org, [add required secrets to your project repo](https://help.github.com/en/actions/configuring-and-managing-workflows/creating-and-storing-encrypted-secrets)
+E.g. `AUTH_FILE_KEY` used to encrypt the Auth URL file; See `.github/workflow/validate.yml` for other referenced secrets.
+
+2. Note the "*_auth_url.txt" files used in this project; The default is "prod_auth_url.txt" (and "qa_auth_url.txt", if utilizing a sandbox).
+If the auth file names are changed, "validate" workflow may not work without modification.
+
+3. By default, the automated validation workflow will trigger on opening a pull request targeting either "dev" or "master" branches.
+If "dev" is the target, a succesful validation run will be followed with a deployment to QA/Sandbox (WIP).
+If "master" is the target, a successful validation will indicate that deployment to Production org should be ready (WIP).
 
 ## Resources
 
 [LWC Recipes](https://github.com/trailheadapps/lwc-recipes)
-
 [eBikes Sample App](https://github.com/trailheadapps/ebikes-lwc)
-
 [DreamHouse Sample App](https://github.com/dreamhouseapp/dreamhouse-lwc)
-
 [CI/CD Setup Instructions](https://mickwheelz.net/index.php/2018/10/03/continuous-integration-with-github-sfdx-and-circleci-easier-than-you-think/)
-
-[Salesforce Logins with Auth Url for CI/CD](http://www.crmscience.com/single-post/2018/01/22/Salesforce-Logins-for-Continuous-Integration-and-Delivery)
+[Github Actions Documentation](https://help.github.com/en/actions)
+[Sample Github Action workflow files](https://github.com/actions/starter-workflows/tree/master/ci)
 
 ## Description of Files and Directories
 

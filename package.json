@@ -2,13 +2,15 @@
     "name": "MyProject",
     "private": true,
     "devDependencies": {
-        "@salesforce/eslint-config-lwc": "^0.3.0",
-        "@salesforce/lwc-jest": "^0.5.5",
-        "acorn": "^6.1.1",
-        "eslint": "^5.15.1",
-        "husky": "^1.3.1",
-        "lint-staged": "^8.1.5",
-        "prettier": "^1.16.4"
+        "@prettier/plugin-xml": "^0.7.2",
+        "@salesforce/eslint-config-lwc": "^0.5.0",
+        "@salesforce/lwc-jest": "^0.6.2",
+        "acorn": "^7.1.1",
+        "eslint": "^6.8.0",
+        "husky": "^4.2.3",
+        "lint-staged": "^10.0.8",
+        "prettier": "^1.19.1",
+        "prettier-plugin-apex": "^1.2.0"
     },
     "scripts": {
         "start": "bash scripts/create-scratch-org.sh",
@@ -34,15 +36,13 @@
         }
     },
     "lint-staged": {
-        "linters": {
-            "**/*.{cmp,component,css,html,js,json,md,page,yaml,yml}": [
-                "prettier --write",
-                "git add"
-            ],
-            "**/lwc/**": [
-                "eslint",
-                "git add"
-            ]
-        }
+        "**/*.{cls,cmp,component,css,html,js,json,md,page,trigger,xml,yaml,yml}": [
+            "prettier --write",
+            "git add"
+        ],
+        "**/lwc/**": [
+            "eslint",
+            "git add"
+        ]
     }
 }

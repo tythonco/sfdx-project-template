@@ -45,9 +45,12 @@ fi
 # TODO: A step for updating the newly-generated package's configuration fields can go here (see package.json)
 #
 
-# Optionally skip validation for rapid development; This will become mandatory before package promotion however
+# Optionally skip validation for rapid development
+# NOTE: When readying for release, a validated version is mandatory for package promotion
 read -p "Temporarily skip validation in package version creation? " SKIP_VALIDATION
 
+# Create package version
+# NOTE: Version ID based on convention noted in package:version:report cmd doc: "ID (starts with 04t)"
 if [ "$SKIP_VALIDATION" == 'y' ]; then
     echo "Creating new version of package ${PKG_NAME} ... skipping validation ..."
     PACKAGE_VER_ID=$(sfdx force:package:version:create --package "$PKG_NAME" --installationkeybypass --wait 15 --skipvalidation \

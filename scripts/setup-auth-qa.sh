@@ -13,7 +13,7 @@ fi
 
 QA="${PROJECT_NAME}QA"
 
-read -p "Enter login domain [test.salesforce.com]" LOGIN_DOMAIN
+read -p "Enter login domain: (test.salesforce.com) " LOGIN_DOMAIN
 if [ -z $LOGIN_DOMAIN ] ; then
     LOGIN_DOMAIN='test.salesforce.com'
 fi

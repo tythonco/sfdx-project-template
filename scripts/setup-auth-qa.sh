@@ -13,8 +13,15 @@ fi
 
 QA="${PROJECT_NAME}QA"
 
+read -p "Enter login domain: (test.salesforce.com) " LOGIN_DOMAIN
+if [ -z $LOGIN_DOMAIN ] ; then
+    LOGIN_DOMAIN='test.salesforce.com'
+fi
+
+LOGIN_URL="https://$LOGIN_DOMAIN"
+
 echo "" && echo "Authenticating to QA org..."
-sfdx force:auth:web:login -a ${QA} -r https://test.salesforce.com
+sfdx force:auth:web:login -a ${QA} -r "$LOGIN_URL"
 
 if [ "$?" = "1" ]
 then

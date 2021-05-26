@@ -1,0 +1,19 @@
+name: QA Deployment Workflow
+on:
+    push:
+        branches:
+            - dev
+    workflow_dispatch:
+jobs:
+    qa-deployment:
+        name: QA Deployment
+        runs-on: ubuntu-latest
+        steps:
+            - name: Check out repository
+              uses: actions/checkout@v2
+            - name: Deploy to QA
+              uses: tythonco/actions-sfdx@master
+              with:
+                  auth_file_key: ${{ secrets.AUTH_FILE_KEY }}
+                  command: deploy
+                  enc_auth_file: qa_auth_url.txt.enc

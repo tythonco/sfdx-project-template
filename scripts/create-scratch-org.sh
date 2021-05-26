@@ -3,7 +3,8 @@
 # IMPORTANT! Replace with the actual project name!
 PROJECT_NAME=MyProject
 DEVHUB_NAME="${PROJECT_NAME}DevHub"
-PERMSET_NAME="${PROJECT_NAME}UserPermissions"
+#ADMIN_PERMSET_NAME="${PROJECT_NAME}AdminUserPermissions"
+#USER_PERMSET_NAME="${PROJECT_NAME}StandardUserPermissions"
 SFDX_AUTH_URL=sfdx_auth_url.txt
 
 # SAMPLE DATA: Define your sample data, uncomment below while updating comma-separated data file names
@@ -48,19 +49,36 @@ fi
 echo ""
 echo "SUCCESS: Source pushed successfully to the scratch org!"
 
-echo ""
-echo "Assigning the project permission set to the default scratch org user..."
-echo ""
-echo "TODO: Define app permission sets then uncomment the below."
-# sfdx force:user:permset:assign -n ${PERMSET_NAME} --json
-if [ "$?" = "1" ]
-then
-        echo ""
-	echo "ERROR: Assigning the project permission set to the default scratch org user failed!"
-	exit
-fi
-echo ""
-echo "SUCCESS: Project permission set was assigned successfully to the default scratch org user!"
+#echo ""
+#echo "Deploying dev artifacts to the scratch org..."
+#echo ""
+#sfdx force:source:deploy -p force-dev --json
+#echo ""
+#if [ "$?" = "1" ]
+#then
+#	echo "ERROR: Deploying dev artifacts to the scratch org failed!"
+#	exit
+#fi
+#echo "SUCCESS: Dev artifacts deployed successfully to the scratch org!"
+
+#echo ""
+#echo "Assigning project permission sets to the default scratch org user..."
+#echo ""
+#sfdx force:user:permset:assign -n ${ADMIN_PERMSET_NAME} --json
+#echo ""
+#if [ "$?" = "1" ]
+#then
+#	echo "ERROR: Assigning a project permission set to the default scratch org user failed!"
+#	exit
+#fi
+#sfdx force:user:permset:assign -n ${USER_PERMSET_NAME} --json
+#echo ""
+#if [ "$?" = "1" ]
+#then
+#	echo "ERROR: Assigning a project permission set to the default scratch org user failed!"
+#	exit
+#fi
+#echo "SUCCESS: Project permission sets assigned successfully to the default scratch org user!"
 
 echo ""
 echo "Importing default data to the scratch org..."

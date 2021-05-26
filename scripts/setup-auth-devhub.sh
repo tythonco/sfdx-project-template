@@ -29,6 +29,9 @@ done
 sed -E -i.bak -e "s/^PROJECT_NAME=.*$/PROJECT_NAME=${PROJECT_NAME}/" scripts/setup-auth-devhub.sh
 sed -E -i.bak -e "s/^PROJECT_NAME=.*$/PROJECT_NAME=${PROJECT_NAME}/" scripts/create-scratch-org.sh && rm scripts/*.bak
 sed -E -i.bak -e "s/^PROJECT_NAME=.*$/PROJECT_NAME=${PROJECT_NAME}/" scripts/bootstrap-package.sh && rm scripts/*.bak
+sed -E -i.bak -e "s/^PROJECT_NAME=.*$/PROJECT_NAME=${PROJECT_NAME}/" scripts/create-package-version.sh && rm scripts/*.bak
+sed -E -i.bak -e "s/^PROJECT_NAME=.*$/PROJECT_NAME=${PROJECT_NAME}/" scripts/install-test-package.sh && rm scripts/*.bak
+sed -E -i.bak -e "s/^PROJECT_NAME=.*$/PROJECT_NAME=${PROJECT_NAME}/" scripts/prep-release-package.sh && rm scripts/*.bak
 sed -E -i.bak -e "s/\"Tython\",/\"${PROJECT_NAME}\",/" config/project-scratch-def.json && rm config/*.bak
 sed -E -i.bak -e "s/\"devs@tython.co\"$/\"$(echo ${PROJECT_NAME} | tr '[:upper:]' '[:lower:]')@tython.co\"/" config/project-scratch-def.json && rm config/*.bak
 sed -E -i.bak -e "s/Tython SFDX Project Template/${PROJECT_NAME} Project/" README.md && rm README.md.bak

@@ -3,24 +3,18 @@
 # This script attempts to install a freshly created package version into a temporary test scratch org.
 # Requires that a Package version ID was successfully generated in prior step.
 
+# IMPORTANT! Replace with the actual project name!
+PROJECT_NAME=MyProject
+
 set -e
 
-PKG_NAME=$1
+TEST_ORG="${PROJECT_NAME}PackageTestOrg"
+#ADMIN_PERMSET_NAME="${PROJECT_NAME}AdminUserPermissions"
+#USER_PERMSET_NAME="${PROJECT_NAME}StandardUserPermissions"
 
-if [ -z "$PKG_NAME" ]
-then
-      read -p "Enter project name " PKG_NAME
-fi
-
-TEST_ORG="${PKG_NAME}PackageTestOrg"
-#ADMIN_PERMSET_NAME="${PKG_NAME}AdminUserPermissions"
-#USER_PERMSET_NAME="${PKG_NAME}StandardUserPermissions"
-
-
-TEST_ORG="PackageTestOrg"
 
 if [ -z "$PACKAGE_VER_ID" ]; then
-    PACKAGE_VER_ID=$(grep "${PKG_NAME}" sfdx-project.json | tail -1 | sed -E 's/^.*"(04t[[:alnum:]]*)"$/\1/')
+    PACKAGE_VER_ID=$(grep "${PROJECT_NAME}" sfdx-project.json | tail -1 | sed -E 's/^.*"(04t[[:alnum:]]*)"$/\1/')
 fi
 
 echo "Install package to temporary scratch org for testing with version ID: ${PACKAGE_VER_ID} ... "

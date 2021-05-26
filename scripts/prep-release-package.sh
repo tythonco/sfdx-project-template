@@ -14,6 +14,9 @@ if ! grep "\"$PKG_NAME\"," sfdx-project.json; then
     exit
 fi
 
+#ADMIN_PERMSET_NAME="${PKG_NAME}AdminUserPermissions"
+#USER_PERMSET_NAME="${PKG_NAME}StandardUserPermissions"
+
 # Check if this is a new version release
 # TODO: redo version check flow to directly modify version info based on prompt instead of requiring manual modifcation before running script
 echo "Package versions with same MAJOR.MINOR.PATCH can only be released once!"
@@ -33,7 +36,7 @@ if [ "$?" = "1" ]; then
     exit 1
 fi
 
-PKG_VER_ID=$(grep "Test Package 1" sfdx-project.json | tail -1 | sed -E 's/^.*"(04t[[:alnum:]]*)"$/\1/')
+PKG_VER_ID=$(grep "${PKG_NAME}" sfdx-project.json | tail -1 | sed -E 's/^.*"(04t[[:alnum:]]*)"$/\1/')
 
 # Promote package
 echo "Promote package ${PKG_NAME} for release ..."
@@ -42,16 +45,17 @@ echo "Package version has been promoted!"
 
 # TODO: Specify a specific pre-release (non-scratch) org for testing?
 # Generate a fresh test scratch org to install the package
+# Ensure namespace is NOT applied to this org since this is to simulate a customer install
 echo "Install promoted package to temporary scratch org for final testing ... "
-if sfdx force:org:list | grep 'PackageTestOrg'; then
+if sfdx force:org:list | grep "${PKG_NAME}PackageTestOrg"; then
     echo "Deleting pre-existing test scratch org ..."
-    sfdx force:org:delete -u PackageTestOrg -p
+    sfdx force:org:delete -u "${PKG_NAME}PackageTestOrg" -p
 fi
-sfdx force:org:create --definitionfile config/project-scratch-def.json --setalias PackageTestOrg
+sfdx force:org:create --nonamespace --definitionfile config/project-scratch-def.json --setalias "${PKG_NAME}PackageTestOrg"
 echo "Test scratch org created."
 
 echo "Preparing to test install PROMOTED package ${PKG_NAME} ... "
-sfdx force:package:install --package "$PKG_VER_ID" --targetusername PackageTestOrg --noprompt --wait -1
+sfdx force:package:install --package "$PKG_VER_ID" --targetusername "${PKG_NAME}PackageTestOrg" --noprompt --wait -1
 
 if [ "$?" = "1" ]
 then
@@ -63,10 +67,43 @@ fi
 
 unset PKG_VER_ID
 
+# Deploy dev artifacts to the scratch org
+#sleep 60
+#echo ""
+#echo "Deploying dev artifacts to the scratch org..."
+#echo ""
+#sfdx force:source:deploy -p force-dev --targetusername "${PKG_NAME}PackageTestOrg" --json
+#echo ""
+#if [ "$?" = "1" ]
+#then
+#	echo "ERROR: Deploying dev artifacts to the scratch org failed!"
+#	exit
+#fi
+#echo "SUCCESS: Dev artifacts deployed successfully to the scratch org!"
+
+#echo ""
+#echo "Assigning project permission sets to the default scratch org user..."
+#echo ""
+#sfdx force:user:permset:assign -n ${ADMIN_PERMSET_NAME} -u "${PKG_NAME}PackageTestOrg" --json
+#echo ""
+#if [ "$?" = "1" ]
+#then
+#	echo "ERROR: Assigning a project permission set to the default scratch org user failed!"
+#	exit
+#fi
+#sfdx force:user:permset:assign -n ${USER_PERMSET_NAME} -u "${PKG_NAME}PackageTestOrg" --json
+#echo ""
+#if [ "$?" = "1" ]
+#then
+#	echo "ERROR: Assigning a project permission set to the default scratch org user failed!"
+#	exit
+#fi
+#echo "SUCCESS: Project permission sets assigned successfully to the default scratch org user!"
+
 echo ""
 echo "Opening scratch org for final testing before official release!"
 echo ""
 sleep 3
-sfdx force:org:open --targetusername PackageTestOrg
+sfdx force:org:open --targetusername "${PKG_NAME}PackageTestOrg"
 
 exit

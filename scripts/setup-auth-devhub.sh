@@ -28,6 +28,7 @@ done
 # modify files that ref generic project_name: scripts/setup-auth-devhub.sh (this file), scripts/create-scratch-org.sh, config/project-scratch-def.json, & README
 sed -E -i.bak -e "s/^PROJECT_NAME=.*$/PROJECT_NAME=${PROJECT_NAME}/" scripts/setup-auth-devhub.sh
 sed -E -i.bak -e "s/^PROJECT_NAME=.*$/PROJECT_NAME=${PROJECT_NAME}/" scripts/create-scratch-org.sh && rm scripts/*.bak
+sed -E -i.bak -e "s/^PROJECT_NAME=.*$/PROJECT_NAME=${PROJECT_NAME}/" scripts/bootstrap-package.sh && rm scripts/*.bak
 sed -E -i.bak -e "s/\"Tython\",/\"${PROJECT_NAME}\",/" config/project-scratch-def.json && rm config/*.bak
 sed -E -i.bak -e "s/\"devs@tython.co\"$/\"$(echo ${PROJECT_NAME} | tr '[:upper:]' '[:lower:]')@tython.co\"/" config/project-scratch-def.json && rm config/*.bak
 sed -E -i.bak -e "s/Tython SFDX Project Template/${PROJECT_NAME} Project/" README.md && rm README.md.bak

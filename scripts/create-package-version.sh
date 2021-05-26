@@ -69,7 +69,7 @@ echo "Successfully generated package with version ID: ${PACKAGE_VER_ID}"
 while true; do
     read -p "Continue with test org installation? y/n " TEST_INSTALL
     case "$TEST_INSTALL" in
-        [Yy]* ) source scripts/install-test-package.sh;;
+        [Yy]* ) source scripts/install-test-package.sh ${PKG_NAME};;
         [Nn]* ) break;;
         * ) echo "y/n.";;
     esac

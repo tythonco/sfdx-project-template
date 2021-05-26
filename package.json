@@ -11,10 +11,15 @@
         "prettier": "^1.16.4"
     },
     "scripts": {
+        "qa": "sfdx force:org:open -u \"$npm_package_name\"QA",
+        "prod": "sfdx force:org:open -u \"$npm_package_name\"Prod",
+        "devhub": "sfdx force:org:open -u \"$npm_package_name\"DevHub",
+        "dev": "sfdx force:org:open -u \"$npm_package_name\"",
         "start": "bash scripts/create-scratch-org.sh",
         "bootstrap-pkg": "bash scripts/bootstrap-package.sh",
-        "test-pkg": "bash scripts/create-package-version.sh",
+        "prep-beta": "bash scripts/create-package-version.sh",
         "prep-release": "bash scripts/prep-release-package.sh",
+        "test-pkg": "bash scripts/install-test-package.sh",
         "setup": "npm run setup-auth-devhub",
         "setup-auth-devhub": "bash scripts/setup-auth-devhub.sh",
         "setup-auth-prod": "bash scripts/setup-auth-prod.sh",

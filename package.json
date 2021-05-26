@@ -12,6 +12,9 @@
     },
     "scripts": {
         "start": "bash scripts/create-scratch-org.sh",
+        "bootstrap-pkg": "bash scripts/bootstrap-package.sh",
+        "test-pkg": "bash scripts/create-package-version.sh",
+        "prep-release": "bash scripts/prep-release-package.sh",
         "setup": "npm run setup-auth-devhub",
         "setup-auth-devhub": "bash scripts/setup-auth-devhub.sh",
         "setup-auth-prod": "bash scripts/setup-auth-prod.sh",

@@ -1,0 +1,19 @@
+name: Validation Workflow
+on:
+    pull_request:
+        branches:
+            - dev
+    workflow_dispatch:
+jobs:
+    validation:
+        name: Validation
+        runs-on: ubuntu-latest
+        steps:
+            - name: Check out repository
+              uses: actions/checkout@v2
+            - name: Validate via check-only deployment
+              uses: tythonco/actions-sfdx@master
+              with:
+                  auth_file_key: ${{ secrets.AUTH_FILE_KEY }}
+                  command: validate
+                  enc_auth_file: prod_auth_url.txt.enc

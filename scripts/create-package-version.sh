@@ -12,9 +12,6 @@ PROJECT_NAME=MyProject
 
 set -e
 
-# Get the package name and the package directory
-read -p "Enter package name: " PROJECT_NAME
-
 # Guess the package directory from entered name
 PKG_PATH=$(echo "$PROJECT_NAME"\
     | sed -E 's/[[:blank:]]+([a-z0-9])/\U\1/gi'\

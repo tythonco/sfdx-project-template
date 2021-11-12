@@ -29,7 +29,7 @@ fi
 # Ensure namespace is NOT applied to this org since this is to simulate a customer install
 sfdx force:org:create --nonamespace --definitionfile config/project-scratch-def.json --setalias "$TEST_ORG"
 
-# Install the package and open the new scratch org for testing
+# Install the package
 sfdx force:package:install --package "$PACKAGE_VER_ID" --targetusername "$TEST_ORG"
 
 unset PACKAGE_VER_ID

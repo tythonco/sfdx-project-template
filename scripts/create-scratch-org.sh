@@ -14,39 +14,36 @@ echo ""
 echo "Authorizing you with the ${PROJECT_NAME} Dev Hub org..."
 echo ""
 sfdx force:auth:sfdxurl:store -f ${SFDX_AUTH_URL} -d -a ${DEVHUB_NAME} --json
+echo ""
 if [ "$?" = "1" ]
 then
-        echo ""
 	echo "ERROR: Can't authorize you with the ${PROJECT_NAME} Dev Hub org!"
 	exit
 fi
-echo ""
 echo "SUCCESS: You've been authorized with the ${PROJECT_NAME} Dev Hub org!"
 
 echo ""
 echo "Building your scratch org, please wait..."
 echo ""
 sfdx force:org:create -v ${DEVHUB_NAME} -f config/project-scratch-def.json -s -a ${PROJECT_NAME} -d 21 --json
+echo ""
 if [ "$?" = "1" ]
 then
-        echo ""
 	echo "ERROR: Can't create your org!"
 	exit
 fi
-echo ""
 echo "SUCCESS: Scratch org created!"
 
 echo ""
 echo "Pushing source to the scratch org! This may take a while! So now might be a good time to stretch your legs and/or grab your productivity beverage of choice..."
 echo ""
 sfdx force:source:push --json
+echo ""
 if [ "$?" = "1" ]
 then
-        echo ""
 	echo "ERROR: Pushing source to the scratch org failed!"
 	exit
 fi
-echo ""
 echo "SUCCESS: Source pushed successfully to the scratch org!"
 
 #echo ""
@@ -85,13 +82,12 @@ echo "Importing default data to the scratch org..."
 echo ""
 echo "TODO: Data import!!! Create your sample data and uncomment below!"
 # sfdx force:data:tree:import -f ${DATA_IMPORT_FILES} --json
+echo ""
 if [ "$?" = "1" ]
 then
-        echo ""
 	echo "ERROR: Importing default data to the scratch org failed!"
 	exit
 fi
-echo ""
 echo "SUCCESS: Default data was successfully imported to the scratch org!"
 
 echo ""
@@ -99,14 +95,15 @@ echo "Running anonymous Apex scripts against the scratch org for additional conf
 echo ""
 echo "TODO: Setup any objects e.g. user roles, if needed! Needs external apex script!"
 # sfdx force:apex:execute -f scripts/setup.apex --json
+echo ""
 if [ "$?" = "1" ]
 then
-        echo ""
 	echo "ERROR: Running anonymous Apex scripts against the scratch org failed!"
 	exit
 fi
-echo ""
 echo "SUCCESS: Successfully ran anonymous Apex scripts against the scratch org!"
+
+sfdx force:source:tracking:reset -p
 
 echo ""
 echo "Opening scratch org for development, may the Flow be with you!"

@@ -14,6 +14,7 @@
         "eslint-plugin-import": "^2.23.4",
         "eslint-plugin-jest": "^24.3.6",
         "husky": "^6.0.0",
+        "jira-prepare-commit-msg": "^1.4.2",
         "lint-staged": "^11.0.0",
         "prettier": "^2.3.1",
         "prettier-plugin-apex": "^1.9.1"
@@ -44,6 +45,19 @@
         "prettier": "prettier --write '**/*.{cmp,component,css,html,js,json,md,page,yaml,yml}'",
         "prettier:verify": "prettier --list-different '**/*.{cmp,component,css,html,js,json,md,page,yaml,yml}'",
         "prepare": "husky install"
+    },
+    "husky": {
+        "hooks": {
+            "pre-commit": "lint-staged && npm run lint:aura",
+            "prepare-commit-msg": "jira-prepare-commit-msg"
+        }
+    },
+    "jira-prepare-commit-msg": {
+        "messagePattern": "[$J] $M",
+        "jiraTicketPattern": "([a-zA-Z0-9]+-\\d+)",
+        "commentChar": "#",
+        "isConventionalCommit": false,
+        "allowEmptyCommitMessage": false
     },
     "lint-staged": {
         "**/*.{cls,cmp,component,css,html,js,json,md,page,trigger,xml,yaml,yml}": [

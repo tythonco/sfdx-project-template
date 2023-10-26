@@ -1,12 +1,13 @@
 #!/bin/bash -l
 
-# This script creates the starting directory structure for a new package and optionally runs SFDX package:create
-# If choosing to generate the package when running this script, it is expected the developer:
+# This script creates the starting directory structure for a new package and optionally runs
+# `sf package create`. If choosing to generate the package when running this script, it is
+# expected the developer:
 # - Setup the Namespace and specified the "namespace" key in sfdx-project.json
 # 2GP workflow documentation see: https://developer.salesforce.com/docs/atlas.en-us.sfdx_dev.meta/sfdx_dev/sfdx_dev_dev2gp_workflow.htm
 
 # IMPORTANT! Replace with the actual project name!
-PROJECT_NAME="My Project"
+PROJECT_NAME="MyProject"
 DEVHUB_NAME="${PROJECT_NAME}DevHub"
 
 set -e
@@ -31,10 +32,7 @@ if [[ "$ACCEPT_PATH" != 'y' ]] ; then
 fi
 
 # Generate folder structure for new module
-mkdir -p "force-app"
-mkdir -p "$PKG_PATH"
-mkdir -p "${PKG_PATH}/core"
-mkdir -p "${PKG_PATH}/core/default"
+mkdir -p "force-app/${PKG_PATH}/core/default"
 
 echo "Generated directories for new module ${PROJECT_NAME}."
 echo "You can run SFDX package create step now."
@@ -47,8 +45,11 @@ if [[ "$RUN_CREATE" == 'y' ]]; then
     echo "Creating the package ${PROJECT_NAME}."
     read  -p "Is this a Managed package (and Namespace is prepared)? y/n " PKG_TYPE
     test "$PKG_TYPE" == 'y' && PKG_TYPE='Managed' || PKG_TYPE='Unlocked'
-    sf package create --target-dev-hub=${DEVHUB_NAME} --name="$Project_Name" \
-        --package-type "$PKG_TYPE" --path "$PKG_PATH"
+    sf package create \
+        --target-dev-hub ${DEVHUB_NAME} \
+        --name "$Project_Name" \
+        --package-type "$PKG_TYPE" \
+        --path "$PKG_PATH"
 fi
 
 echo "Package bootstrapped! May the Flow be with you!"

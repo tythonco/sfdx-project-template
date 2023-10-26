@@ -6,7 +6,7 @@
 # 2GP workflow documentation see: https://developer.salesforce.com/docs/atlas.en-us.sfdx_dev.meta/sfdx_dev/sfdx_dev_dev2gp_workflow.htm
 
 # IMPORTANT! Replace with the actual project name!
-PROJECT_NAME=MyProject
+PROJECT_NAME="My Project"
 DEVHUB_NAME="${PROJECT_NAME}DevHub"
 
 set -e
@@ -38,7 +38,8 @@ mkdir -p "${PKG_PATH}/core/default"
 
 echo "Generated directories for new module ${PROJECT_NAME}."
 echo "You can run SFDX package create step now."
-echo "NOTE: Namespace must already be prepared and entered in sfdx-project.json. This can also be done later when creating test package versions."
+echo "NOTE: Namespace must already be prepared and entered in sfdx-project.json. This can" \
+"also be done later when creating test package versions."
 read -p "Create package now? y/n " RUN_CREATE
 
 # Check if package has already been created; If not, create package now
@@ -46,7 +47,8 @@ if [[ "$RUN_CREATE" == 'y' ]]; then
     echo "Creating the package ${PROJECT_NAME}."
     read  -p "Is this a Managed package (and Namespace is prepared)? y/n " PKG_TYPE
     test "$PKG_TYPE" == 'y' && PKG_TYPE='Managed' || PKG_TYPE='Unlocked'
-    sfdx force:package:create -v ${DEVHUB_NAME} --name "$PROJECT_NAME" --packagetype "$PKG_TYPE" --path "$PKG_PATH"
+    sf package create --target-dev-hub=${DEVHUB_NAME} --name="$Project_Name" \
+        --package-type "$PKG_TYPE" --path "$PKG_PATH"
 fi
 
 echo "Package bootstrapped! May the Flow be with you!"

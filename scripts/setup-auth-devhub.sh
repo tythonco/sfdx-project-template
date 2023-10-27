@@ -39,7 +39,9 @@ sed -E -i.bak -e "s/\"MyProject\",/\"${PROJECT_NAME}\",/" package.json && rm *.b
 sed -E -i.bak -e "s/\"MyProject\",/\"${PROJECT_NAME}\",/" package-lock.json && rm *.bak
 
 echo "Authenticating to DevHub org..."
-sfdx force:auth:web:login -a ${DEVHUB_NAME} -r https://login.salesforce.com
+sf org login web \
+    --alias ${DEVHUB_NAME} \
+    --instance-url https://login.salesforce.com
 
 if [ "$?" = "1" ]
 then
@@ -51,7 +53,11 @@ fi
 
 # Obtain authenticated login url to DevHub org
 echo "Creating authentication file ..."
-sfdx force:org:display -u ${DEVHUB_NAME} --verbose | grep "Sfdx Auth Url" | sed -E 's/^Sfdx Auth Url[[:blank:]]*(.*)$/\1/' > ${AUTH_FILE}
+sf org display \
+    --target-org ${DEVHUB_NAME} \
+    --verbose \
+    | grep "Sfdx Auth Url" \
+    | sed -E 's/^Sfdx Auth Url[[:blank:]]*(.*)$/\1/' > ${AUTH_FILE}
 
 if [ "$?" = "1" ]
 then

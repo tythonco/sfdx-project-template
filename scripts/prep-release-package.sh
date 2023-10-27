@@ -29,7 +29,11 @@ fi
 
 # Create a new package version for promotion
 echo "Create package version for promotion..."
-sfdx force:package:version:create --package "$PROJECT_NAME" --installationkeybypass --codecoverage --wait 15
+sf package version create \
+    --package "$PROJECT_NAME" \
+    --installation-key-bypass \
+    --code-coverage \
+    --wait 15
 
 if [ "$?" = "1" ]; then
 	echo "" && echo "ERROR: Problem creating release-ready package version! Ensure passing unit tests and code coverage! Exiting ..."
@@ -40,22 +44,33 @@ PKG_VER_ID=$(grep "${PROJECT_NAME}" sfdx-project.json | tail -1 | sed -E 's/^.*"
 
 # Promote package
 echo "Promote package ${PROJECT_NAME} for release ..."
-sfdx force:package:version:promote --package "$PKG_VER_ID" --noprompt
+sf package version promote \
+    --package "$PKG_VER_ID" \
+    --no-prompt
 echo "Package version has been promoted!"
 
 # TODO: Specify a specific pre-release (non-scratch) org for testing?
 # Generate a fresh test scratch org to install the package
 # Ensure namespace is NOT applied to this org since this is to simulate a customer install
 echo "Install promoted package to temporary scratch org for final testing ... "
-if sfdx force:org:list | grep "${PROJECT_NAME}PackageTestOrg"; then
+if sf org list | grep "${PROJECT_NAME}PackageTestOrg"; then
     echo "Deleting pre-existing test scratch org ..."
-    sfdx force:org:delete -u "${PROJECT_NAME}PackageTestOrg" -p
+    sf org delete scratch \
+        --target-org "${PROJECT_NAME}PackagetestOrg" \
+        --no-prompt
 fi
-sfdx force:org:create --nonamespace --definitionfile config/project-scratch-def.json --setalias "${PROJECT_NAME}PackageTestOrg"
+sf org create scratch \
+    --no-namespace \
+    --definition-file config/project-scratch-def.json \
+    --alias "${PROJECT_NAME}PackageTestOrg"
 echo "Test scratch org created."
 
 echo "Preparing to test install PROMOTED package ${PROJECT_NAME} ... "
-sfdx force:package:install --package "$PKG_VER_ID" --targetusername "${PROJECT_NAME}PackageTestOrg" --noprompt --wait -1
+sf package install \
+    --package "$PKG_VER_ID" \
+    --target-org "${PROJECT_NAME}PackageTestOrg" \
+    --no-prompt \
+    --wait -1
 
 if [ "$?" = "1" ]
 then
@@ -104,6 +119,6 @@ echo ""
 echo "Opening scratch org for final testing before official release!"
 echo ""
 sleep 3
-sfdx force:org:open --targetusername "${PROJECT_NAME}PackageTestOrg"
+sf org open --target-org "${PROJECT_NAME}PackageTestOrg"
 
 exit

@@ -15,7 +15,9 @@ QA="${PROJECT_NAME}QA"
 LOGIN_URL="https://test.salesforce.com"
 
 echo "" && echo "Authenticating to QA org..."
-sfdx force:auth:web:login -a ${QA} -r ${LOGIN_URL}
+sf org login web \
+    --alias ${QA} \
+    --instance-url ${LOGIN_URL}
 
 if [ "$?" = "1" ]
 then
@@ -27,7 +29,11 @@ fi
 
 # Obtain authenticated login url to QA org
 echo "Creating authentication file ..."
-sfdx force:org:display -u ${QA} --verbose | grep "Sfdx Auth Url" | sed -E 's/^Sfdx Auth Url[[:blank:]]*(.*)$/\1/' > ${AUTH_FILE}
+sf org display \
+    --target-org ${QA} \
+    --verbose \
+    | grep "Sfdx Auth Url" \
+    | sed -E 's/^Sfdx Auth Url[[:blank:]]*(.*)$/\1/' > ${AUTH_FILE}
 
 if [ "$?" = "1" ]
 then

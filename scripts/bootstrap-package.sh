@@ -6,9 +6,9 @@
 # - Setup the Namespace and specified the "namespace" key in sfdx-project.json
 # 2GP workflow documentation see: https://developer.salesforce.com/docs/atlas.en-us.sfdx_dev.meta/sfdx_dev/sfdx_dev_dev2gp_workflow.htm
 
-# IMPORTANT! Replace with the actual project name!
-PROJECT_NAME="MyProject"
-DEVHUB_NAME="${PROJECT_NAME}DevHub"
+source utils.bash
+PROJECT_NAME="$(project_name)"
+DEVHUB_NAME="$(devhub_name)"
 
 set -e
 

@@ -4,8 +4,8 @@
 # Only released package versions can be listed on AppExchange and installed in customer orgs.
 # Prior to running the script, it is expected that the package has been fully-tested (incl. unit tests and adequate code coverage) and is release-ready.
 
-# IMPORTANT! Replace with the actual project name!
-PROJECT_NAME=MyProject
+source utils.bash
+PROJECT_NAME="$(project_name)"
 
 set -e
 

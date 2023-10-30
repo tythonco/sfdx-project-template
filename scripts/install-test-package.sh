@@ -3,8 +3,8 @@
 # This script attempts to install a freshly created package version into a temporary test scratch org.
 # Requires that a Package version ID was successfully generated in prior step.
 
-# IMPORTANT! Replace with the actual project name!
-PROJECT_NAME=MyProject
+source utils.bash
+PROJECT_NAME="$(project_name)"
 
 set -e
 

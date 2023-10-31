@@ -45,7 +45,8 @@ fi
 echo "SUCCESS: Scratch org created!"
 
 echo ""
-echo "Pushing source to the scratch org! This may take a while! So now might be a good time to stretch your legs and/or grab your productivity beverage of choice..."
+echo "Pushing source to the scratch org! This may take a while! So now might be a good time " \
+    "to stretch your legs and/or grab your productivity beverage of choice..."
 echo ""
 sf project deploy start --json
 echo ""

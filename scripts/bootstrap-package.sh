@@ -18,10 +18,10 @@ if grep "\"$PROJECT_NAME\"," sfdx-project.json; then
 fi
 
 # Guess the package directory from entered name
-PKG_PATH=$(echo "$PROJECT_NAME"\
-    | sed -E 's/[[:blank:]]+([a-z0-9])/\U\1/gi'\
-    | sed -E 's/_([A-Z0-9])/\U\1/gi'\
-    | sed -E 's/-([A-Z0-9])/\U\1/gi'\
+PKG_PATH=$(echo "$PROJECT_NAME" \
+    | sed -E 's/[[:blank:]]+([a-z0-9])/\U\1/gi' \
+    | sed -E 's/_([A-Z0-9])/\U\1/gi' \
+    | sed -E 's/-([A-Z0-9])/\U\1/gi' \
     | sed -E 's/^([A-Z0-9])/\l\1/')
 
 read -p "Is this the desired package path: ${PKG_PATH}? y/n " ACCEPT_PATH
@@ -35,9 +35,9 @@ fi
 mkdir -p "force-app/${PKG_PATH}/core/default"
 
 echo "Generated directories for new module ${PROJECT_NAME}."
-echo "You can run SFDX package create step now."
+echo "You can run sf package create step now."
 echo "NOTE: Namespace must already be prepared and entered in sfdx-project.json. This can" \
-"also be done later when creating test package versions."
+    "also be done later when creating test package versions."
 read -p "Create package now? y/n " RUN_CREATE
 
 # Check if package has already been created; If not, create package now

@@ -14,10 +14,10 @@ PROJECT_NAME="$(project_name)"
 set -e
 
 # Guess the package directory from entered name
-PKG_PATH=$(echo "$PROJECT_NAME"\
-    | sed -E 's/[[:blank:]]+([a-z0-9])/\U\1/gi'\
-    | sed -E 's/_([A-Z0-9])/\U\1/gi'\
-    | sed -E 's/-([A-Z0-9])/\U\1/gi'\
+PKG_PATH=$(echo "$PROJECT_NAME" \
+    | sed -E 's/[[:blank:]]+([a-z0-9])/\U\1/gi' \
+    | sed -E 's/_([A-Z0-9])/\U\1/gi' \
+    | sed -E 's/-([A-Z0-9])/\U\1/gi' \
     | sed -E 's/^([A-Z0-9])/\l\1/')
 
 read -p "Is this the correct package path: ${PKG_PATH}? y/n " ACCEPT_PATH

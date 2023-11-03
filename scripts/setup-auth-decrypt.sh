@@ -1,9 +1,10 @@
 #!/bin/sh
 
-PROJECT_NAME=$1
-DEVHUB_NAME="${PROJECT_NAME}DevHub"
-PROD_NAME="${PROJECT_NAME}Prod"
-QA_NAME="${PROJECT_NAME}QA"
+source utils.bash
+PROJECT_NAME="$(project_name)"
+DEVHUB_NAME="$(devhub_name)"
+PROD_NAME="$(prod_name)"
+QA_NAME="$(qa_name)"
 AUTH_FILE=sfdx_auth_url.txt
 PROD_AUTH_FILE=prod_auth_url.txt
 QA_AUTH_FILE=qa_auth_url.txt
@@ -14,7 +15,8 @@ then
 fi
 
 echo ""
-read -p "Enter password securely shared w/ team for auth file encryption/decryption " AUTH_URL_PASSWORD
+read -p "Enter password securely shared w/ team for auth file encryption/decryption " \
+    AUTH_URL_PASSWORD
 
 # Decrypt Prod auth file
 if openssl enc -d -aes-256-cbc -md md5 -in ${PROD_AUTH_FILE}.enc -out ${PROD_AUTH_FILE} -k ${AUTH_URL_PASSWORD} ; then

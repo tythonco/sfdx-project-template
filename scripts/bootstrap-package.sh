@@ -6,11 +6,11 @@
 # - Setup the Namespace and specified the "namespace" key in sfdx-project.json
 # 2GP workflow documentation see: https://developer.salesforce.com/docs/atlas.en-us.sfdx_dev.meta/sfdx_dev/sfdx_dev_dev2gp_workflow.htm
 
-source utils.bash
+set -e
+
+source scripts/utils.bash
 PROJECT_NAME="$(project_name)"
 DEVHUB_NAME="$(devhub_name)"
-
-set -e
 
 if grep "\"$PROJECT_NAME\"," sfdx-project.json; then
     echo 'This package has already been created! Exiting ... '

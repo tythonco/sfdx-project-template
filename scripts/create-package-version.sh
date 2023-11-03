@@ -3,20 +3,21 @@
 # This script uses SFDX to generate a new version of a package, creating the package if needed.
 # Package versions are what actually get installed into Orgs.
 # Prior to running this script and generating the package, it is expected the developer:
-# - Verified that all package components are in the project directory where you want to create the package
+# - Verified that all package components are in the project directory where you want to create
+#   the package
 # - Setup the Namespace and specified the "namespace" key in sfdx-project.json
 # 2GP workflow documentation see: https://developer.salesforce.com/docs/atlas.en-us.sfdx_dev.meta/sfdx_dev/sfdx_dev_dev2gp_workflow.htm
 
-# IMPORTANT! Replace with the actual project name!
-PROJECT_NAME=MyProject
+source utils.bash
+PROJECT_NAME="$(project_name)"
 
 set -e
 
 # Guess the package directory from entered name
-PKG_PATH=$(echo "$PROJECT_NAME"\
-    | sed -E 's/[[:blank:]]+([a-z0-9])/\U\1/gi'\
-    | sed -E 's/_([A-Z0-9])/\U\1/gi'\
-    | sed -E 's/-([A-Z0-9])/\U\1/gi'\
+PKG_PATH=$(echo "$PROJECT_NAME" \
+    | sed -E 's/[[:blank:]]+([a-z0-9])/\U\1/gi' \
+    | sed -E 's/_([A-Z0-9])/\U\1/gi' \
+    | sed -E 's/-([A-Z0-9])/\U\1/gi' \
     | sed -E 's/^([A-Z0-9])/\l\1/')
 
 read -p "Is this the correct package path: ${PKG_PATH}? y/n " ACCEPT_PATH
@@ -38,11 +39,15 @@ else
     echo "Creating the package ${PROJECT_NAME}."
     read  -p "Is this a Managed package (and Namespace is prepared)? y/n " PKG_TYPE
     test "$PKG_TYPE" == 'y' && PKG_TYPE='Managed' || PKG_TYPE='Unlocked'
-    sfdx force:package:create --name "$PROJECT_NAME" --packagetype "$PKG_TYPE" --path "$PKG_PATH"
+    sf force:package:create \
+        --name "$PROJECT_NAME" \
+        --package-type "$PKG_TYPE" \
+        --path "$PKG_PATH"
 fi
 
 #
-# TODO: A step for updating the newly-generated package's configuration fields can go here (see package.json)
+# TODO: A step for updating the newly-generated package's configuration fields can go here
+# (see package.json)
 #
 
 # Optionally skip validation for rapid development
@@ -50,15 +55,23 @@ fi
 read -p "Temporarily skip validation in package version creation? " SKIP_VALIDATION
 
 # Create package version
-# NOTE: Version ID based on convention noted in package:version:report cmd doc: "ID (starts with 04t)"
+# NOTE: Version ID based on convention noted in package:version:report cmd doc: "ID (starts
+# with 04t)"
 if [ "$SKIP_VALIDATION" == 'y' ]; then
     echo "Creating new version of package ${PROJECT_NAME} ... skipping validation ..."
-    PACKAGE_VER_ID=$(sfdx force:package:version:create --package "$PROJECT_NAME" --installationkeybypass --wait 15 --skipvalidation \
+    PACKAGE_VER_ID=$(sf force:package:version:create \
+        --package "$PROJECT_NAME" \
+        --installationkeybypass \
+        --wait 15 \
+        --skipvalidation \
     | grep login.salesforce.com \
     | sed -E 's/^.*(04t[[:alnum:]]*)$/\1/')
 else
     echo "Creating new version of package ${PROJECT_NAME} ..."
-    PACKAGE_VER_ID=$(sfdx force:package:version:create --package "$PROJECT_NAME" --installationkeybypass --wait 15 \
+    PACKAGE_VER_ID=$(sf force:package:version:create \
+        --package "$PROJECT_NAME" \
+        --installationkeybypass \
+        --wait 15 \
     | grep login.salesforce.com \
     | sed -E 's/^.*(04t[[:alnum:]]*)$/\1/')
 fi

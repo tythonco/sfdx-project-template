@@ -30,7 +30,7 @@ done
 PROD="${PROJECT_NAME}Prod"
 
 echo "" && echo "Authenticating to Prod org..."
-sfdx force:auth:web:login -a ${PROD}
+sf org login web --alias ${PROD}
 
 if [ "$?" = "1" ]
 then
@@ -42,7 +42,11 @@ fi
 
 # Obtain authenticated login url to Prod org
 echo "Creating authentication file ..."
-sfdx force:org:display -u ${PROD} --verbose | grep "Sfdx Auth Url" | sed -E 's/^Sfdx Auth Url[[:blank:]]*(.*)$/\1/' > ${AUTH_FILE}
+sf org display \
+    --target-org ${PROD} \
+    --verbose \
+    | grep "Sfdx Auth Url" \
+    | sed -E 's/^Sfdx Auth Url[[:blank:]]*(.*)$/\1/' > ${AUTH_FILE}
 
 if [ "$?" = "1" ]
 then

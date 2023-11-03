@@ -1,5 +1,6 @@
 {
-    "name": "MyProject",
+    "name": "myproject",
+    "authFileSuffix": "_auth_url.txt",
     "private": true,
     "devDependencies": {
         "@lwc/eslint-plugin-lwc": "^1.0.1",

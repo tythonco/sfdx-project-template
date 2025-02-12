@@ -17,7 +17,7 @@
         "jira-prepare-commit-msg": "^1.4.2",
         "lint-staged": "^11.0.0",
         "prettier": "^2.3.1",
-        "prettier-plugin-apex": "^1.9.1"
+        "prettier-plugin-apex": "^1.13.0"
     },
     "scripts": {
         "qa": "sfdx force:org:open -u \"$npm_package_name\"QA",

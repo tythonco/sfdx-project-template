@@ -1,19 +1,23 @@
 #!/bin/sh
 
-# IMPORTANT! Replace with the actual project name!
-PROJECT_NAME=MyProject
-DEVHUB_NAME="${PROJECT_NAME}DevHub"
+source utils.bash
+PROJECT_NAME="$(project_name)"
+DEVHUB_NAME="$(devhub_name)"
 #ADMIN_PERMSET_NAME="${PROJECT_NAME}AdminUserPermissions"
 #USER_PERMSET_NAME="${PROJECT_NAME}StandardUserPermissions"
 SFDX_AUTH_URL=sfdx_auth_url.txt
 
-# SAMPLE DATA: Define your sample data, uncomment below while updating comma-separated data file names
-# DATA_IMPORT_FILES=data/SomeObjects1.json,data/MySettings.json,data/EtcEtc.json
+# SAMPLE DATA: Define your sample data, uncomment below while updating comma-separated data
+# file names DATA_IMPORT_FILES=data/SomeObjects1.json,data/MySettings.json,data/EtcEtc.json
 
 echo ""
 echo "Authorizing you with the ${PROJECT_NAME} Dev Hub org..."
 echo ""
-sfdx force:auth:sfdxurl:store -f ${SFDX_AUTH_URL} -d -a ${DEVHUB_NAME} --json
+sf auth sfdxurl store \
+    --sfdx-url-file ${SFDX_AUTH_URL} \
+    --set-default-dev-hub \
+    --alias ${DEVHUB_NAME} \
+    --json
 echo ""
 if [ "$?" = "1" ]
 then
@@ -25,7 +29,13 @@ echo "SUCCESS: You've been authorized with the ${PROJECT_NAME} Dev Hub org!"
 echo ""
 echo "Building your scratch org, please wait..."
 echo ""
-sfdx force:org:create -v ${DEVHUB_NAME} -f config/project-scratch-def.json -s -a ${PROJECT_NAME} -d 21 --json
+sf org create scratch \
+    --target-dev-hub ${DEVHUB_NAME} \
+    --definition-file config/project-scratch-def.json \
+    --set-default \
+    --alias ${PROJECT_NAME} \
+    --duration-days 21 \
+    --json
 echo ""
 if [ "$?" = "1" ]
 then
@@ -35,9 +45,10 @@ fi
 echo "SUCCESS: Scratch org created!"
 
 echo ""
-echo "Pushing source to the scratch org! This may take a while! So now might be a good time to stretch your legs and/or grab your productivity beverage of choice..."
+echo "Pushing source to the scratch org! This may take a while! So now might be a good time " \
+    "to stretch your legs and/or grab your productivity beverage of choice..."
 echo ""
-sfdx force:source:push --json
+sf project deploy start --json
 echo ""
 if [ "$?" = "1" ]
 then
@@ -103,10 +114,10 @@ then
 fi
 echo "SUCCESS: Successfully ran anonymous Apex scripts against the scratch org!"
 
-sfdx force:source:tracking:reset -p
+sf project reset tracking --no-prompt
 
 echo ""
 echo "Opening scratch org for development, may the Flow be with you!"
 echo ""
 sleep 3
-sfdx force:org:open
+sf org open
